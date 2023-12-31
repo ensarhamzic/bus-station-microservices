@@ -1,6 +1,6 @@
 ﻿namespace UserManagement.Data.Enums
 {
-    public enum Role
+    public enum UserRole
     {
         Admin,
         Driver,

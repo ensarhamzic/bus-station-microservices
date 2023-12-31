@@ -17,7 +17,7 @@ namespace UserManagement.Data.ViewModels
         [EmailAddress]
         public string Email { get; set; } = string.Empty;
         [Required]
-        public Role Role { get; set; }
+        public UserRole Role { get; set; }
         [Required]
         [MinLength(8)]
         public string Password { get; set; } = string.Empty;

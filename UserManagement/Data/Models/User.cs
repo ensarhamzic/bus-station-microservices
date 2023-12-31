@@ -17,7 +17,7 @@ namespace UserManagement.Data.Models
         [EmailAddress]
         public string Email { get; set; } = String.Empty;
         [Required]
-        public Role Role { get; set; } = Role.Passenger;
+        public UserRole Role { get; set; } = UserRole.Passenger;
         public byte[] PasswordHash { get; set; } = Array.Empty<byte>();
         public byte[] PasswordSalt { get; set; } = Array.Empty<byte>();
     }

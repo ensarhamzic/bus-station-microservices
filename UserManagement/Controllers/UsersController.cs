@@ -44,5 +44,33 @@ namespace UserManagement.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
+
+        [HttpGet("drivers/{id}")]
+        public IActionResult GetDriverById(int id)
+        {
+            try
+            {
+                var driver = userService.GetDriverById(id);
+                return Ok(driver);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpGet("passengers/{id}")]
+        public IActionResult GetPassengerById(int id)
+        {
+            try
+            {
+                var passenger = userService.GetPassengerById(id);
+                return Ok(passenger);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
     }
 }

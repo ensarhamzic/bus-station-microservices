@@ -10,7 +10,7 @@ namespace UserManagement.Data.DTO
         public string FirstName { get; set; } = String.Empty;
         public string LastName { get; set; } = String.Empty;
         public string Email { get; set; } = String.Empty;
-        public Role Role { get; set; } = Role.Passenger;
+        public UserRole Role { get; set; } = UserRole.Passenger;
 
         public static explicit operator UserVM(User u)
         {

@@ -9,6 +9,7 @@ using UserManagement.Data.DTO;
 using UserManagement.Data.Enums;
 using UserManagement.Data.Models;
 using UserManagement.Data.ViewModels;
+using UserManagement.Utils;
 
 namespace UserManagement.Services.Impl
 {
@@ -30,7 +31,7 @@ namespace UserManagement.Services.Impl
             var userExists = dbContext.Users.Any(u => u.Email == request.Email);
             if (userExists)
                 throw new Exception("This user already exists");
-            CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
+            AuthUtils.CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
             var newUser = new User()
             {
                 FirstName = request.FirstName,
@@ -42,7 +43,7 @@ namespace UserManagement.Services.Impl
             };
             dbContext.Add(newUser);
             dbContext.SaveChanges();
-            string token = CreateToken(newUser);
+            string token = AuthUtils.CreateToken(newUser);
             UserVM user = (UserVM)newUser;
             return new { user, token };
         }
@@ -53,55 +54,29 @@ namespace UserManagement.Services.Impl
             var foundUser = dbContext.Users.FirstOrDefault(u => u.Email == request.Email);
             if (foundUser == null)
                 throw new Exception(errorMessage);
-            var passwordCorrect = VerifyPasswordHash(request.Password, foundUser.PasswordHash, foundUser.PasswordSalt);
+            var passwordCorrect = AuthUtils.VerifyPasswordHash(request.Password, foundUser.PasswordHash, foundUser.PasswordSalt);
             if (!passwordCorrect)
                 throw new Exception(errorMessage);
-            var token = CreateToken(foundUser);
+            var token = AuthUtils.CreateToken(foundUser);
             UserVM user = (UserVM)foundUser;
             return new { user, token };
         }
 
-        private int GetAuthUserId()
+        public UserVM GetDriverById(int id)
         {
-            return int.Parse(httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.PrimarySid));
+            var foundUser = dbContext.Users.FirstOrDefault(u => u.Id == id);
+            if (foundUser == null || foundUser.Role != UserRole.Driver)
+                throw new Exception("User not found or is not a driver");
+            return (UserVM)foundUser;
         }
 
-        public static void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
+        public UserVM GetPassengerById(int id)
         {
-            using var hmac = new HMACSHA512();
-            passwordSalt = hmac.Key;
-            passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+            var foundUser = dbContext.Users.FirstOrDefault(u => u.Id == id);
+            if (foundUser == null || foundUser.Role != UserRole.Passenger)
+                throw new Exception("User not found or is not a passenger");
+            return (UserVM)foundUser;
         }
 
-        private static bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
-        {
-            using var hmac = new HMACSHA512(passwordSalt);
-            var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-            return computedHash.SequenceEqual(passwordHash);
-        }
-
-        private string CreateToken(User user)
-        {
-            List<Claim> claims = new List<Claim>()
-            {
-                new Claim(ClaimTypes.PrimarySid, user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.Email),
-                new Claim(ClaimTypes.Role, user.Role.ToString()),
-            };
-
-            var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.
-                GetBytes(configuration.GetSection("JWT:Token").Value));
-
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var token = new JwtSecurityToken(
-                claims: claims,
-                expires: DateTime.Now.AddDays(1),
-                signingCredentials: creds
-                );
-
-            var jwt = new JwtSecurityTokenHandler().WriteToken(token);
-
-            return jwt;
-        }
     }
 }
