@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using UserManagement.Data.Enums;
 
 namespace UserManagement.Data.ViewModels
 {
@@ -15,6 +16,8 @@ namespace UserManagement.Data.ViewModels
         [Required]
         [EmailAddress]
         public string Email { get; set; } = string.Empty;
+        [Required]
+        public Role Role { get; set; }
         [Required]
         [MinLength(8)]
         public string Password { get; set; } = string.Empty;

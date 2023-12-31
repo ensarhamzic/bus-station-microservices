@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using UserManagement.Data.Enums;
 using UserManagement.Data.Models;
 
 namespace UserManagement.Data.DTO
@@ -9,7 +10,7 @@ namespace UserManagement.Data.DTO
         public string FirstName { get; set; } = String.Empty;
         public string LastName { get; set; } = String.Empty;
         public string Email { get; set; } = String.Empty;
-
+        public Role Role { get; set; } = Role.Passenger;
 
         public static explicit operator UserVM(User u)
         {
@@ -18,7 +19,8 @@ namespace UserManagement.Data.DTO
                 Id = u.Id,
                 FirstName = u.FirstName,
                 LastName = u.LastName,
-                Email = u.Email
+                Email = u.Email,
+                Role = u.Role
             };
         }
     }

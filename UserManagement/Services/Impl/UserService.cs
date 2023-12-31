@@ -1,10 +1,12 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using UserManagement.Data;
 using UserManagement.Data.DTO;
+using UserManagement.Data.Enums;
 using UserManagement.Data.Models;
 using UserManagement.Data.ViewModels;
 
@@ -36,6 +38,7 @@ namespace UserManagement.Services.Impl
                 Email = request.Email,
                 PasswordHash = passwordHash,
                 PasswordSalt = passwordSalt,
+                Role = request.Role
             };
             dbContext.Add(newUser);
             dbContext.SaveChanges();
@@ -83,6 +86,7 @@ namespace UserManagement.Services.Impl
             {
                 new Claim(ClaimTypes.PrimarySid, user.Id.ToString()),
                 new Claim(ClaimTypes.Name, user.Email),
+                new Claim(ClaimTypes.Role, user.Role.ToString()),
             };
 
             var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.

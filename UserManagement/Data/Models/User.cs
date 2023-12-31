@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
+using UserManagement.Data.Enums;
 
 namespace UserManagement.Data.Models
 {
@@ -14,7 +16,9 @@ namespace UserManagement.Data.Models
         public string LastName { get; set; } = String.Empty;
         [EmailAddress]
         public string Email { get; set; } = String.Empty;
-        public byte[] PasswordHash { get; set; }
-        public byte[] PasswordSalt { get; set; }
+        [Required]
+        public Role Role { get; set; } = Role.Passenger;
+        public byte[] PasswordHash { get; set; } = Array.Empty<byte>();
+        public byte[] PasswordSalt { get; set; } = Array.Empty<byte>();
     }
 }
