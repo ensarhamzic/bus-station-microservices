@@ -3,7 +3,7 @@ using RoutesManagement.Data;
 using RoutesManagement.Data.Models;
 using RoutesManagement.Data.ViewModels;
 
-namespace RoutesManagement.Services.Impl
+namespace RoutesManagement.Services
 {
     public class BusService : IBusService
     {

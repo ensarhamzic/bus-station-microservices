@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using UserManagement.Data;
 using UserManagement.Services;
-using UserManagement.Services.Impl;
 
 var builder = WebApplication.CreateBuilder(args);
 

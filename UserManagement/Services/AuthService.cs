@@ -5,7 +5,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using UserManagement.Data.Models;
 
-namespace UserManagement.Services.Impl
+namespace UserManagement.Services
 {
     public class AuthService : IAuthService
     {

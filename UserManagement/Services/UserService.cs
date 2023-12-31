@@ -10,7 +10,7 @@ using UserManagement.Data.Enums;
 using UserManagement.Data.Models;
 using UserManagement.Data.ViewModels;
 
-namespace UserManagement.Services.Impl
+namespace UserManagement.Services
 {
     public class UserService : IUserService
     {

@@ -2,7 +2,7 @@
 using RabbitMQ.Client;
 using System.Text;
 
-namespace RoutesManagement.Brokers.Impl
+namespace RoutesManagement.Brokers
 {
     public class MessageBrokerService : IMessageBrokerService
     {
