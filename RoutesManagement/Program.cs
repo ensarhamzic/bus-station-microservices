@@ -16,11 +16,10 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<RoutesDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
-, ServiceLifetime.Singleton);
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddSingleton<IBusService, BusService>();
-builder.Services.AddSingleton<IMessageBrokerService, MessageBrokerService>();
+builder.Services.AddTransient<IBusService, BusService>();
+builder.Services.AddTransient<IMessageBrokerService, MessageBrokerService>();
 
 builder.Services.AddHostedService<MessageBrokerConfiguration>();
 
