@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using UserManagement.Data.ViewModels;
+using UserManagement.Services;
 using UserManagement.Services.Impl;
 
 namespace UserManagement.Controllers
@@ -9,9 +10,9 @@ namespace UserManagement.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private UserService userService;
+        private IUserService userService;
 
-        public UsersController(UserService userService)
+        public UsersController(IUserService userService)
         {
             this.userService = userService;
         }

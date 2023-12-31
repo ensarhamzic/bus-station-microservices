@@ -18,7 +18,7 @@ builder.Services.AddDbContext<UserDbContext>(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddTransient<UserService>();
+builder.Services.AddTransient<IUserService, UserService>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
