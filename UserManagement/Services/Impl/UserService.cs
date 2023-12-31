@@ -44,6 +44,19 @@ namespace UserManagement.Services.Impl
             return new { user, token };
         }
 
+        public object LoginUser(UserLoginVM request)
+        {
+            var errorMessage = "Check your credentials and try again!";
+            var foundUser = dbContext.Users.FirstOrDefault(u => u.Email == request.Email);
+            if (foundUser == null)
+                throw new Exception(errorMessage);
+            var passwordCorrect = VerifyPasswordHash(request.Password, foundUser.PasswordHash, foundUser.PasswordSalt);
+            if (!passwordCorrect)
+                throw new Exception(errorMessage);
+            var token = CreateToken(foundUser);
+            UserVM user = (UserVM)foundUser;
+            return new { user, token };
+        }
 
         private int GetAuthUserId()
         {

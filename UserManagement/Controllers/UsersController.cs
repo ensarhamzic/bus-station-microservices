@@ -30,5 +30,19 @@ namespace UserManagement.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
+
+        [HttpPost("login")]
+        public IActionResult LoginUser([FromBody] UserLoginVM request)
+        {
+            try
+            {
+                var user = userService.LoginUser(request);
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
     }
 }
