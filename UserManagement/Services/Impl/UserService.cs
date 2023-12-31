@@ -9,21 +9,20 @@ using UserManagement.Data.DTO;
 using UserManagement.Data.Enums;
 using UserManagement.Data.Models;
 using UserManagement.Data.ViewModels;
-using UserManagement.Utils;
 
 namespace UserManagement.Services.Impl
 {
     public class UserService : IUserService
     {
+        private IAuthService authService;
         private IHttpContextAccessor httpContextAccessor;
         private UserDbContext dbContext;
-        private IConfiguration configuration;
 
-        public UserService(IHttpContextAccessor httpContextAccessor, UserDbContext dbContext, IConfiguration configuration)
+        public UserService(IHttpContextAccessor httpContextAccessor, UserDbContext dbContext, IAuthService authService)
         {
             this.httpContextAccessor = httpContextAccessor;
             this.dbContext = dbContext;
-            this.configuration = configuration;
+            this.authService = authService;
         }
 
         public object RegisterUser(UserRegisterVM request)
@@ -31,7 +30,7 @@ namespace UserManagement.Services.Impl
             var userExists = dbContext.Users.Any(u => u.Email == request.Email);
             if (userExists)
                 throw new Exception("This user already exists");
-            AuthUtils.CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
+            authService.CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
             var newUser = new User()
             {
                 FirstName = request.FirstName,
@@ -43,7 +42,7 @@ namespace UserManagement.Services.Impl
             };
             dbContext.Add(newUser);
             dbContext.SaveChanges();
-            string token = AuthUtils.CreateToken(newUser);
+            string token = authService.CreateToken(newUser);
             UserVM user = (UserVM)newUser;
             return new { user, token };
         }
@@ -54,10 +53,10 @@ namespace UserManagement.Services.Impl
             var foundUser = dbContext.Users.FirstOrDefault(u => u.Email == request.Email);
             if (foundUser == null)
                 throw new Exception(errorMessage);
-            var passwordCorrect = AuthUtils.VerifyPasswordHash(request.Password, foundUser.PasswordHash, foundUser.PasswordSalt);
+            var passwordCorrect = authService.VerifyPasswordHash(request.Password, foundUser.PasswordHash, foundUser.PasswordSalt);
             if (!passwordCorrect)
                 throw new Exception(errorMessage);
-            var token = AuthUtils.CreateToken(foundUser);
+            var token = authService.CreateToken(foundUser);
             UserVM user = (UserVM)foundUser;
             return new { user, token };
         }

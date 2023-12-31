@@ -22,8 +22,8 @@ namespace UserManagement.Controllers
         {
             try
             {
-                var NewUser = userService.RegisterUser(request);
-                return Created(nameof(NewUser), NewUser);
+                var newUser = userService.RegisterUser(request);
+                return Created(nameof(newUser), newUser);
             }
             catch (Exception ex)
             {
