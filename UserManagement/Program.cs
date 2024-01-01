@@ -1,6 +1,4 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using UserManagement.Data;
 using UserManagement.Services;
 
@@ -19,22 +17,6 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<IAuthService, AuthService>();
-
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8
-            .GetBytes(builder.Configuration.GetSection("JWT:Token").Value)),
-            ValidateIssuer = false,
-            ValidateAudience = false,
-        };
-    });
-
-builder.Services.AddHttpContextAccessor();
-
 
 var app = builder.Build();
 

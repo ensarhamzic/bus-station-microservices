@@ -1,10 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Microsoft.IdentityModel.Tokens;
-using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Security.Cryptography;
-using UserManagement.Data;
+﻿using UserManagement.Data;
 using UserManagement.Data.DTO;
 using UserManagement.Data.Enums;
 using UserManagement.Data.Models;
@@ -15,17 +9,15 @@ namespace UserManagement.Services
     public class UserService : IUserService
     {
         private IAuthService authService;
-        private IHttpContextAccessor httpContextAccessor;
         private UserDbContext dbContext;
 
-        public UserService(IHttpContextAccessor httpContextAccessor, UserDbContext dbContext, IAuthService authService)
+        public UserService(UserDbContext dbContext, IAuthService authService)
         {
-            this.httpContextAccessor = httpContextAccessor;
             this.dbContext = dbContext;
             this.authService = authService;
         }
 
-        public object RegisterUser(UserRegisterVM request)
+        public UserVM RegisterUser(UserRegisterVM request)
         {
             var userExists = dbContext.Users.Any(u => u.Email == request.Email);
             if (userExists)
@@ -42,12 +34,10 @@ namespace UserManagement.Services
             };
             dbContext.Add(newUser);
             dbContext.SaveChanges();
-            string token = authService.CreateToken(newUser);
-            UserVM user = (UserVM)newUser;
-            return new { user, token };
+            return (UserVM)newUser;
         }
 
-        public object LoginUser(UserLoginVM request)
+        public UserVM LoginUser(UserLoginVM request)
         {
             var errorMessage = "Check your credentials and try again!";
             var foundUser = dbContext.Users.FirstOrDefault(u => u.Email == request.Email);
@@ -56,9 +46,7 @@ namespace UserManagement.Services
             var passwordCorrect = authService.VerifyPasswordHash(request.Password, foundUser.PasswordHash, foundUser.PasswordSalt);
             if (!passwordCorrect)
                 throw new Exception(errorMessage);
-            var token = authService.CreateToken(foundUser);
-            UserVM user = (UserVM)foundUser;
-            return new { user, token };
+            return (UserVM)foundUser;
         }
 
         public UserVM GetDriverById(int id)

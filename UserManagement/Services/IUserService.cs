@@ -7,7 +7,7 @@ namespace UserManagement.Services
     {
         UserVM GetDriverById(int id);
         UserVM GetPassengerById(int id);
-        object LoginUser(UserLoginVM request);
-        object RegisterUser(UserRegisterVM request);
+        UserVM LoginUser(UserLoginVM request);
+        UserVM RegisterUser(UserRegisterVM request);
     }
 }

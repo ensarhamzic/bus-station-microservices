@@ -1,4 +1,7 @@
 using ApiGateway;
+using ApiGateway.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,8 +12,25 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddTransient<ITokenService, TokenService>();
+
 builder.Services.Configure<Urls>(builder.Configuration.GetSection("Urls"));
 builder.Services.AddHttpClient();
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8
+            .GetBytes(builder.Configuration.GetSection("JWT:Token").Value)),
+            ValidateIssuer = false,
+            ValidateAudience = false,
+        };
+    });
+
+builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 
