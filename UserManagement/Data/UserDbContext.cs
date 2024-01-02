@@ -10,6 +10,7 @@ namespace UserManagement.Data
         {
         }
 
+
         public DbSet<User> Users { get; set; } = null!;
     }
 }

@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using UserManagement;
 using UserManagement.Data;
 using UserManagement.Services;
 
@@ -34,5 +35,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+PrepDb.PrepPopulation(app);
 
 app.Run();
