@@ -17,19 +17,20 @@ namespace RoutesManagement.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddBus([FromBody] AddBusVM bus)
+        public async Task<IActionResult> AddBus([FromBody] AddBusVM bus, [FromHeader(Name = "x-user-id")] string userId)
         {
             try
             {
-                busService.AddBusToQueue(bus);
-                return Accepted(new
-                {
-                    message = "Add bus request submitted successfully",
-                });
+                var a = userId;
+                var newBus = await busService.AddBus(bus);
+                return Created(nameof(AddBus), newBus);
             }
             catch (Exception ex)
             {
-                return BadRequest(new { message = ex.Message });
+                return BadRequest(new
+                {
+                    message = ex.Message
+                });
             }
         }
     }

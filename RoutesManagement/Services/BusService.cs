@@ -16,11 +16,6 @@ namespace RoutesManagement.Services
             this.dbContext = dbContext;
         }
 
-        public void AddBusToQueue(AddBusVM bus)
-        {
-            messageBrokerService.Publish(Queues.Buses, bus);
-        }
-
         public async Task<BusVM> AddBus(AddBusVM bus)
         {
             var busEntity = new Bus
@@ -34,6 +29,7 @@ namespace RoutesManagement.Services
 
             await dbContext.Buses.AddAsync(busEntity);
             await dbContext.SaveChangesAsync();
+            messageBrokerService.Publish(Queues.Buses, bus);
 
             return (BusVM)busEntity;
         }
