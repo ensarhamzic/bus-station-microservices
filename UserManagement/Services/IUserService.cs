@@ -5,9 +5,9 @@ namespace UserManagement.Services
 {
     public interface IUserService
     {
-        UserVM GetDriverById(int id);
-        UserVM GetPassengerById(int id);
-        UserVM LoginUser(UserLoginVM request);
-        UserVM RegisterUser(UserRegisterVM request);
+        Task<UserVM> GetDriverById(int id);
+        Task<UserVM> GetPassengerById(int id);
+        Task<UserVM> LoginUser(UserLoginVM request);
+        Task<UserVM> RegisterUser(UserRegisterVM request);
     }
 }

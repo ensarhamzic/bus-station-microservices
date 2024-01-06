@@ -1,4 +1,5 @@
-﻿using UserManagement.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using UserManagement.Data;
 using UserManagement.Data.DTO;
 using UserManagement.Data.Enums;
 using UserManagement.Data.Models;
@@ -17,9 +18,9 @@ namespace UserManagement.Services
             this.authService = authService;
         }
 
-        public UserVM RegisterUser(UserRegisterVM request)
+        public async Task<UserVM> RegisterUser(UserRegisterVM request)
         {
-            var userExists = dbContext.Users.Any(u => u.Email == request.Email);
+            var userExists = await dbContext.Users.AnyAsync(u => u.Email == request.Email);
             if (userExists)
                 throw new Exception("This user already exists");
             authService.CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
@@ -32,15 +33,15 @@ namespace UserManagement.Services
                 PasswordSalt = passwordSalt,
                 Role = request.Role
             };
-            dbContext.Add(newUser);
-            dbContext.SaveChanges();
+            await dbContext.AddAsync(newUser);
+            await dbContext.SaveChangesAsync();
             return (UserVM)newUser;
         }
 
-        public UserVM LoginUser(UserLoginVM request)
+        public async Task<UserVM> LoginUser(UserLoginVM request)
         {
             var errorMessage = "Check your credentials and try again!";
-            var foundUser = dbContext.Users.FirstOrDefault(u => u.Email == request.Email);
+            var foundUser = await dbContext.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
             if (foundUser == null)
                 throw new Exception(errorMessage);
             var passwordCorrect = authService.VerifyPasswordHash(request.Password, foundUser.PasswordHash, foundUser.PasswordSalt);
@@ -49,17 +50,17 @@ namespace UserManagement.Services
             return (UserVM)foundUser;
         }
 
-        public UserVM GetDriverById(int id)
+        public async Task<UserVM> GetDriverById(int id)
         {
-            var foundUser = dbContext.Users.FirstOrDefault(u => u.Id == id);
+            var foundUser = await dbContext.Users.FirstOrDefaultAsync(u => u.Id == id);
             if (foundUser == null || foundUser.Role != UserRole.Driver)
                 throw new Exception("User not found or is not a driver");
             return (UserVM)foundUser;
         }
 
-        public UserVM GetPassengerById(int id)
+        public async Task<UserVM> GetPassengerById(int id)
         {
-            var foundUser = dbContext.Users.FirstOrDefault(u => u.Id == id);
+            var foundUser = await dbContext.Users.FirstOrDefaultAsync(u => u.Id == id);
             if (foundUser == null || foundUser.Role != UserRole.Passenger)
                 throw new Exception("User not found or is not a passenger");
             return (UserVM)foundUser;

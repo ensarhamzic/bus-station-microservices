@@ -16,11 +16,11 @@ namespace UserManagement.Controllers
         }
 
         [HttpPost("register")]
-        public IActionResult RegisterUser([FromBody] UserRegisterVM request)
+        public async Task<IActionResult> RegisterUser([FromBody] UserRegisterVM request)
         {
             try
             {
-                var newUser = userService.RegisterUser(request);
+                var newUser = await userService.RegisterUser(request);
                 return Created(nameof(newUser), newUser);
             }
             catch (Exception ex)
@@ -30,11 +30,11 @@ namespace UserManagement.Controllers
         }
 
         [HttpPost("login")]
-        public IActionResult LoginUser([FromBody] UserLoginVM request)
+        public async Task<IActionResult> LoginUser([FromBody] UserLoginVM request)
         {
             try
             {
-                var user = userService.LoginUser(request);
+                var user = await userService.LoginUser(request);
                 return Ok(user);
             }
             catch (Exception ex)
@@ -44,11 +44,11 @@ namespace UserManagement.Controllers
         }
 
         [HttpGet("drivers/{id}")]
-        public IActionResult GetDriverById(int id)
+        public async Task<IActionResult> GetDriverById(int id)
         {
             try
             {
-                var driver = userService.GetDriverById(id);
+                var driver = await userService.GetDriverById(id);
                 return Ok(driver);
             }
             catch (Exception ex)
@@ -58,11 +58,11 @@ namespace UserManagement.Controllers
         }
 
         [HttpGet("passengers/{id}")]
-        public IActionResult GetPassengerById(int id)
+        public async Task<IActionResult> GetPassengerById(int id)
         {
             try
             {
-                var passenger = userService.GetPassengerById(id);
+                var passenger = await userService.GetPassengerById(id);
                 return Ok(passenger);
             }
             catch (Exception ex)
