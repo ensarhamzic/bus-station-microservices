@@ -1,6 +1,5 @@
 ﻿using ApiGateway.Data.Enums;
 using System.ComponentModel.DataAnnotations;
-
 namespace ApiGateway.Data.ViewModels
 {
     public class UserRegisterVM : IValidatableObject

@@ -10,5 +10,10 @@
         {
             return $"{UserBaseRoute}/drivers/{id}";
         }
+
+        public static string GetPassengerByIdRoute(string id)
+        {
+            return $"{UserBaseRoute}/passengers/{id}";
+        }
     }
 }

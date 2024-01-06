@@ -1,6 +1,8 @@
-﻿using ApiGateway.Data.Enums;
+﻿
+using ApiGateway.Data.Enums;
+using ApiGateway.Data.Models;
 
-namespace ApiGateway.Data.ViewModels
+namespace ApiGateway.Data.DTO
 {
     public class UserVM
     {
@@ -9,5 +11,17 @@ namespace ApiGateway.Data.ViewModels
         public string LastName { get; set; } = String.Empty;
         public string Email { get; set; } = String.Empty;
         public UserRole Role { get; set; } = UserRole.Passenger;
+
+        public static explicit operator UserVM(User u)
+        {
+            return new UserVM()
+            {
+                Id = u.Id,
+                FirstName = u.FirstName,
+                LastName = u.LastName,
+                Email = u.Email,
+                Role = u.Role
+            };
+        }
     }
 }

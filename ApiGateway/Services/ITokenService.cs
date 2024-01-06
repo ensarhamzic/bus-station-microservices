@@ -1,4 +1,5 @@
-﻿using ApiGateway.Data.ViewModels;
+﻿using ApiGateway.Data.DTO;
+using ApiGateway.Data.ViewModels;
 
 namespace ApiGateway.Services
 {
