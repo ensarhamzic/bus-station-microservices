@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using UserManagement;
 using UserManagement.Data;
 using UserManagement.Services;
@@ -8,6 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
+
+builder.Services.AddHealthChecks();
 
 builder.Services.AddDbContext<UserDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
@@ -37,5 +41,7 @@ app.UseAuthorization();
 app.MapControllers();
 
 PrepDb.PrepPopulation(app);
+
+app.MapHealthChecks("/healthz");
 
 app.Run();
