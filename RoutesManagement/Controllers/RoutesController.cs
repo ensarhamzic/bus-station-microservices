@@ -50,5 +50,22 @@ namespace RoutesManagement.Controllers
                 });
             }
         }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteRoute(int id)
+        {
+            try
+            {
+                var deletedRoute = await routeService.DeleteRoute(id);
+                return Ok(deletedRoute);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    message = ex.Message
+                });
+            }
+        }
     }
 }
