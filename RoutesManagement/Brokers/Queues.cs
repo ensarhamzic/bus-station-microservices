@@ -2,6 +2,6 @@
 {
     public enum Queues
     {
-        Buses,
+        DeletedRoutes,
     }
 }

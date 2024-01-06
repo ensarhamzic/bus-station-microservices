@@ -7,12 +7,10 @@ namespace RoutesManagement.Services
 {
     public class BusService : IBusService
     {
-        private readonly IMessageBrokerService messageBrokerService;
         private readonly RoutesDbContext dbContext;
 
-        public BusService(IMessageBrokerService messageBrokerService, RoutesDbContext dbContext)
+        public BusService(RoutesDbContext dbContext)
         {
-            this.messageBrokerService = messageBrokerService;
             this.dbContext = dbContext;
         }
 
@@ -29,7 +27,6 @@ namespace RoutesManagement.Services
 
             await dbContext.Buses.AddAsync(busEntity);
             await dbContext.SaveChangesAsync();
-            messageBrokerService.Publish(Queues.Buses, bus);
 
             return (BusVM)busEntity;
         }

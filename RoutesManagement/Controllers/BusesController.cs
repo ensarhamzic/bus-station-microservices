@@ -16,11 +16,10 @@ namespace RoutesManagement.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddBus([FromBody] AddBusVM bus, [FromHeader(Name = "x-user-id")] string userId)
+        public async Task<IActionResult> AddBus([FromBody] AddBusVM bus)
         {
             try
             {
-                var a = userId;
                 var newBus = await busService.AddBus(bus);
                 return Created(nameof(AddBus), newBus);
             }

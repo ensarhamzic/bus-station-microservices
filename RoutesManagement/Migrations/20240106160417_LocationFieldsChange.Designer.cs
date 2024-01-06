@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using RoutesManagement.Data;
@@ -11,9 +12,11 @@ using RoutesManagement.Data;
 namespace RoutesManagement.Migrations
 {
     [DbContext(typeof(RoutesDbContext))]
-    partial class RoutesDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240106160417_LocationFieldsChange")]
+    partial class LocationFieldsChange
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

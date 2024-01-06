@@ -4,6 +4,5 @@
     {
         public const string BusBaseRoute = "/Buses";
         public const string AddBusRoute = $"{BusBaseRoute}";
-
     }
 }

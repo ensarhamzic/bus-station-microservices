@@ -3,6 +3,7 @@ using RoutesManagement.Brokers;
 using RoutesManagement.Brokers.Configuration;
 using RoutesManagement.Data;
 using RoutesManagement.Services;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,10 +14,15 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddControllers().AddJsonOptions(x =>
+                x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+
 builder.Services.AddDbContext<RoutesDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddTransient<IBusService, BusService>();
+builder.Services.AddTransient<ILocationService, LocationService>();
+builder.Services.AddTransient<IRouteService, RouteService>();
 builder.Services.AddTransient<IMessageBrokerService, MessageBrokerService>();
 
 builder.Services.AddHostedService<MessageBrokerConfiguration>();
