@@ -1,5 +1,6 @@
 ﻿using ApiGateway.Data.ViewModels;
 using ApiGateway.Routes;
+using ApiGateway.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,11 +15,13 @@ namespace ApiGateway.Controllers
     [Authorize(Roles = "Admin")]
     public class LocationsController : ControllerBase
     {
+        private readonly IGatewayService gatewayService;
         private readonly HttpClient httpClient;
         private readonly Urls url;
 
-        public LocationsController(IHttpClientFactory httpClientFactory, IOptions<Urls> config)
+        public LocationsController(IGatewayService gatewayService, IHttpClientFactory httpClientFactory, IOptions<Urls> config)
         {
+            this.gatewayService = gatewayService;
             httpClient = httpClientFactory.CreateClient();
             url = config.Value;
         }
@@ -26,15 +29,15 @@ namespace ApiGateway.Controllers
         [HttpPost]
         public async Task<IActionResult> AddLocation([FromBody] AddLocationVM location)
         {
-            var urlPath = url.RoutesManagement + LocationRoutes.AddLocationRoute;
-            var requestContent = new StringContent(JsonConvert.SerializeObject(location), Encoding.UTF8, "application/json");
-            var response = await httpClient.PostAsync(urlPath, requestContent);
-            if (response.IsSuccessStatusCode)
+            var result = await gatewayService.SendRequest<AddLocationVM, LocationVM>(url.RoutesManagement + LocationRoutes.ADD_LOCATION, null, location);
+
+            if (result.StatusCode == System.Net.HttpStatusCode.Created)
             {
-                var locationVM = JsonConvert.DeserializeObject<LocationVM>(await response.Content.ReadAsStringAsync());
+                LocationVM locationVM = result.Data;
                 return Created(nameof(AddLocation), locationVM);
             }
-            return BadRequest(response.Content.ReadAsStringAsync());
+
+            return BadRequest(result.ErrorMessage);
         }
 
     }

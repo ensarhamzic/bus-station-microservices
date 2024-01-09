@@ -2,7 +2,7 @@
 {
     public static class BusRoutes
     {
-        public const string BusBaseRoute = "/Buses";
-        public const string AddBusRoute = $"{BusBaseRoute}";
+        public const string BUS_BASE = "/buses";
+        public const string ADD_BUS = $"{BUS_BASE}";
     }
 }

@@ -7,11 +7,13 @@ using System.Security.Claims;
 
 namespace ApiGateway.Services
 {
-    public class TokenService : ITokenService
+    public class AuthService : IAuthService
     {
         private readonly IConfiguration configuration;
-        public TokenService(IConfiguration configuration)
+        private readonly IHttpContextAccessor httpContextAccessor;
+        public AuthService(IHttpContextAccessor httpContextAccessor, IConfiguration configuration)
         {
+            this.httpContextAccessor = httpContextAccessor;
             this.configuration = configuration;
         }
 
@@ -36,6 +38,11 @@ namespace ApiGateway.Services
             var jwt = new JwtSecurityTokenHandler().WriteToken(token);
 
             return jwt;
+        }
+
+        public string GetAuthUserId()
+        {
+            return httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.PrimarySid);
         }
     }
 }

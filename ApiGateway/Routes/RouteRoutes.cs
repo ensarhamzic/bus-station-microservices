@@ -2,13 +2,18 @@
 {
     public static class RouteRoutes
     {
-        public const string RouteBaseRoute = "/Routes";
-        public const string AddRouteRoute = $"{RouteBaseRoute}";
-        public const string GetRoutesRoute = $"{RouteBaseRoute}";
+        public const string ROUTE_BASE = "/routes";
+        public const string ADD_ROUTE = $"{ROUTE_BASE}";
+        public const string GET_ROUTES = $"{ROUTE_BASE}";
 
-        public static string DeleteRouteRoute(int id)
+        public static string DeleteRoute(int id)
         {
-            return $"{RouteBaseRoute}/{id}";
+            return $"{ROUTE_BASE}/{id}";
+        }
+
+        public static string GetRoute(int id)
+        {
+            return $"{ROUTE_BASE}/{id}";
         }
     }
 }

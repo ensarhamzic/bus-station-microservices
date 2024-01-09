@@ -2,7 +2,7 @@
 {
     public static class LocationRoutes
     {
-        public const string LocationBaseRoute = "/Locations";
-        public const string AddLocationRoute = $"{LocationBaseRoute}";
+        public const string LOCATION_BASE = "/locations";
+        public const string ADD_LOCATION = $"{LOCATION_BASE}";
     }
 }

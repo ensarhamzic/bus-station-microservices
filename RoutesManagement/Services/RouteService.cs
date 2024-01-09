@@ -23,6 +23,16 @@ namespace RoutesManagement.Services
             return routes.Select(r => (RouteVM)r);
         }
 
+
+        public Task<RouteVM> GetRoute(int id)
+        {
+            var route = context.Routes.Include(r => r.Bus).Include(r => r.FromLocation).Include(r => r.ToLocation).FirstOrDefaultAsync(r => r.Id == id);
+            if (route.Result == null)
+                throw new Exception("Route not found");
+
+            return route.ContinueWith(t => (RouteVM)t.Result);
+        }
+
         public async Task<RouteVM> AddRoute(AddRouteVM route)
         {
             Data.Models.Route newRoute = new Data.Models.Route()

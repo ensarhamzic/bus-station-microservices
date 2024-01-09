@@ -13,13 +13,15 @@ namespace ApiGateway.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly ITokenService tokenService;
+        private readonly IAuthService authService;
+        private readonly IGatewayService gatewayService;
         private readonly HttpClient httpClient;
         private readonly Urls url;
 
-        public UsersController(ITokenService tokenService, IHttpClientFactory httpClientFactory, IOptions<Urls> config)
+        public UsersController(IAuthService authService, IGatewayService gatewayService, IHttpClientFactory httpClientFactory, IOptions<Urls> config)
         {
-            this.tokenService = tokenService;
+            this.authService = authService;
+            this.gatewayService = gatewayService;
             httpClient = httpClientFactory.CreateClient();
             url = config.Value;
         }
@@ -27,13 +29,12 @@ namespace ApiGateway.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> RegisterUser([FromBody] UserRegisterVM request)
         {
-            var urlPath = url.UsersManagement + UserRoutes.RegisterRoute;
-            var requestContent = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
-            var response = await httpClient.PostAsync(urlPath, requestContent);
-            if (response.IsSuccessStatusCode)
+            var result = await gatewayService.SendRequest<UserRegisterVM, UserVM>(url.UsersManagement + UserRoutes.REGISTER, null, request);
+
+            if (result.StatusCode == System.Net.HttpStatusCode.Created)
             {
-                UserVM user = JsonConvert.DeserializeObject<UserVM>(await response.Content.ReadAsStringAsync());
-                string token = tokenService.CreateToken(user);
+                UserVM user = result.Data;
+                string token = authService.CreateToken(user);
                 var rsp = new
                 {
                     user,
@@ -41,19 +42,18 @@ namespace ApiGateway.Controllers
                 };
                 return Created(nameof(rsp), rsp);
             }
-            return BadRequest(response.Content.ReadAsStringAsync());
+            return BadRequest(result.ErrorMessage);
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> LoginUser([FromBody] UserLoginVM request)
         {
-            var urlPath = url.UsersManagement + UserRoutes.LoginRoute;
-            var requestContent = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
-            var response = await httpClient.PostAsync(urlPath, requestContent);
-            if (response.IsSuccessStatusCode)
+            var result = await gatewayService.SendRequest<UserLoginVM, UserVM>(url.UsersManagement + UserRoutes.LOGIN, null, request);
+
+            if (result.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                UserVM user = JsonConvert.DeserializeObject<UserVM>(await response.Content.ReadAsStringAsync());
-                string token = tokenService.CreateToken(user);
+                UserVM user = result.Data;
+                string token = authService.CreateToken(user);
                 var rsp = new
                 {
                     user,
@@ -61,21 +61,22 @@ namespace ApiGateway.Controllers
                 };
                 return Ok(rsp);
             }
-            return BadRequest(response.Content.ReadAsStringAsync());
+
+            return BadRequest(result.ErrorMessage);
         }
 
         [HttpGet("drivers/{id}")]
         public async Task<IActionResult> Get(string id)
         {
-            var urlPath = url.UsersManagement + UserRoutes.GetDriverByIdRoute(id);
-            var request = new HttpRequestMessage(HttpMethod.Get, urlPath);
-            var response = await httpClient.SendAsync(request);
-            if (response.IsSuccessStatusCode)
+            var result = await gatewayService.SendRequest<UserVM>(url.UsersManagement + UserRoutes.GetDriverById(id), null);
+
+            if (result.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                UserVM user = JsonConvert.DeserializeObject<UserVM>(await response.Content.ReadAsStringAsync());
+                UserVM user = result.Data;
                 return Ok(user);
             }
-            return BadRequest(response.Content.ReadAsStringAsync());
+
+            return BadRequest(result.ErrorMessage);
         }
     }
 }

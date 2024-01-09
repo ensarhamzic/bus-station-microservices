@@ -12,7 +12,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddTransient<ITokenService, TokenService>();
+builder.Services.AddTransient<IAuthService, AuthService>();
+builder.Services.AddTransient<IGatewayService, GatewayService>();
 
 builder.Services.Configure<Urls>(builder.Configuration.GetSection("Urls"));
 builder.Services.AddHttpClient();

@@ -1,6 +1,6 @@
 ﻿using ApiGateway.Data.ViewModels;
 using ApiGateway.Routes;
-using ApiGateway.Utils;
+using ApiGateway.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -14,13 +14,13 @@ namespace ApiGateway.Controllers
     [Authorize(Roles = "Admin")]
     public class BusesController : ControllerBase
     {
+        private readonly IGatewayService gatewayService;
         private readonly HttpClient httpClient;
         private readonly Urls url;
-        private IHttpContextAccessor httpContextAccessor;
 
-        public BusesController(IHttpContextAccessor httpContextAccessor, IHttpClientFactory httpClientFactory, IOptions<Urls> config)
+        public BusesController(IGatewayService gatewayService, IHttpClientFactory httpClientFactory, IOptions<Urls> config)
         {
-            this.httpContextAccessor = httpContextAccessor;
+            this.gatewayService = gatewayService;
             httpClient = httpClientFactory.CreateClient();
             url = config.Value;
         }
@@ -28,16 +28,14 @@ namespace ApiGateway.Controllers
         [HttpPost]
         public async Task<IActionResult> AddBus([FromBody] AddBusVM bus)
         {
-            var userId = AuthUtils.GetAuthUserId(httpContextAccessor);
-            var urlPath = url.RoutesManagement + BusRoutes.AddBusRoute;
-            var requestContent = new StringContent(JsonConvert.SerializeObject(bus), Encoding.UTF8, "application/json");
-            var response = await httpClient.PostAsync(urlPath, requestContent);
-            if (response.IsSuccessStatusCode)
+            var result = await gatewayService.SendRequest<AddBusVM, BusVM>(url.RoutesManagement + BusRoutes.ADD_BUS, null, bus);
+
+            if (result.StatusCode == System.Net.HttpStatusCode.Created)
             {
-                var busVM = JsonConvert.DeserializeObject<BusVM>(await response.Content.ReadAsStringAsync());
+                BusVM busVM = result.Data;
                 return Created(nameof(AddBus), busVM);
             }
-            return BadRequest(response.Content.ReadAsStringAsync());
+            return BadRequest(result.ErrorMessage);
         }
 
     }

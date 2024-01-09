@@ -1,6 +1,8 @@
 ﻿
 using ApiGateway.Data.ViewModels;
 using ApiGateway.Routes;
+using ApiGateway.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -11,29 +13,54 @@ namespace ApiGateway.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Passenger")]
     public class TicketsController : ControllerBase
     {
+        private readonly IAuthService authService;
+        private readonly IGatewayService gatewayService;
         private readonly HttpClient httpClient;
         private readonly Urls url;
 
-        public TicketsController(IHttpClientFactory httpClientFactory, IOptions<Urls> config)
+        public TicketsController(IAuthService authService, IGatewayService gatewayService, IHttpClientFactory httpClientFactory, IOptions<Urls> config)
         {
+            this.authService = authService;
+            this.gatewayService = gatewayService;
             httpClient = httpClientFactory.CreateClient();
             url = config.Value;
         }
 
-        [HttpPost]
+        [HttpPost("buy")]
         public async Task<IActionResult> BuyTicket([FromBody] BuyTicketVM request)
         {
-            var urlPath = url.TicketsManagement + TicketRoutes.BuyTicketRoute;
-            var requestContent = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
-            var response = await httpClient.PostAsync(urlPath, requestContent);
-            if (response.IsSuccessStatusCode)
+            var headers = new Dictionary<string, string>()
             {
-                TicketVM ticket = JsonConvert.DeserializeObject<TicketVM>(await response.Content.ReadAsStringAsync());
-                return Created(nameof(ticket), ticket);
+                { CustomHeaders.USER_ID, authService.GetAuthUserId() }
+            };
+            var result = await gatewayService.SendRequest<BuyTicketVM, TicketVM>(url.TicketsManagement + TicketRoutes.BUY_TICKET, headers, request);
+
+            if (result.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                TicketVM ticket = result.Data;
+                return Ok(ticket);
             }
-            return BadRequest(response.Content.ReadAsStringAsync());
+            return BadRequest(result.ErrorMessage);
+        }
+
+        [HttpPost("book")]
+        public async Task<IActionResult> BookTicket([FromBody] BuyTicketVM request)
+        {
+            var headers = new Dictionary<string, string>()
+            {
+                { CustomHeaders.USER_ID, authService.GetAuthUserId() }
+            };
+            var result = await gatewayService.SendRequest<BuyTicketVM, TicketVM>(url.TicketsManagement + TicketRoutes.BOOK_TICKET, headers, request);
+
+            if (result.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                TicketVM ticket = result.Data;
+                return Ok(ticket);
+            }
+            return BadRequest(result.ErrorMessage);
         }
     }
 }

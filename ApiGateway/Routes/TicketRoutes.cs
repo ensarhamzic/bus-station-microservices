@@ -2,9 +2,9 @@
 {
     public static class TicketRoutes
     {
-        public const string TicketBaseRoute = "/tickets";
-        public const string BuyTicketRoute = $"{TicketBaseRoute}/buy";
-        public const string BookTicketRoute = $"{TicketBaseRoute}/book";
-        public const string ConfirmTicketRoute = $"{TicketBaseRoute}/confirm";
+        public const string TICKET_BASE = "/tickets";
+        public const string BUY_TICKET = $"{TICKET_BASE}/buy";
+        public const string BOOK_TICKET = $"{TICKET_BASE}/book";
+        public const string CONFIRM_TICKET = $"{TICKET_BASE}/confirm";
     }
 }

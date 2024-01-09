@@ -3,8 +3,9 @@ using ApiGateway.Data.ViewModels;
 
 namespace ApiGateway.Services
 {
-    public interface ITokenService
+    public interface IAuthService
     {
         string CreateToken(UserVM user);
+        string GetAuthUserId();
     }
 }

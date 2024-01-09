@@ -2,18 +2,18 @@
 {
     public static class UserRoutes
     {
-        public const string UserBaseRoute = "/Users";
-        public const string RegisterRoute = $"{UserBaseRoute}/register";
-        public const string LoginRoute = $"{UserBaseRoute}/login";
+        public const string USER_BASE = "/users";
+        public const string REGISTER = $"{USER_BASE}/register";
+        public const string LOGIN = $"{USER_BASE}/login";
 
-        public static string GetDriverByIdRoute(string id)
+        public static string GetDriverById(string id)
         {
-            return $"{UserBaseRoute}/drivers/{id}";
+            return $"{USER_BASE}/drivers/{id}";
         }
 
-        public static string GetPassengerByIdRoute(string id)
+        public static string GetPassengerById(string id)
         {
-            return $"{UserBaseRoute}/passengers/{id}";
+            return $"{USER_BASE}/passengers/{id}";
         }
     }
 }

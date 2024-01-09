@@ -33,6 +33,23 @@ namespace RoutesManagement.Controllers
             }
         }
 
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetRoute(int id)
+        {
+            try
+            {
+                var route = await routeService.GetRoute(id);
+                return Ok(route);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    message = ex.Message
+                });
+            }
+        }
+
 
         [HttpPost]
         public async Task<IActionResult> AddRoute(AddRouteVM route)
