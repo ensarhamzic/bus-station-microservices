@@ -39,6 +39,10 @@ namespace ApiGateway.Controllers
             if (route.StatusCode != System.Net.HttpStatusCode.OK)
                 return BadRequest(route.ErrorMessage);
 
+            var ticketAvailability = await gatewayService.SendRequest<bool>(url.TicketsManagement + TicketRoutes.CheckTicketAvailability(request.RouteId, request.SeatNo), null);
+            if (ticketAvailability.StatusCode != System.Net.HttpStatusCode.OK)
+                return BadRequest("Seat is already taken");
+
             var result = await gatewayService.SendRequest<BuyTicketVM, TicketVM>(url.TicketsManagement + TicketRoutes.BUY_TICKET, headers, request);
 
             if (result.StatusCode == System.Net.HttpStatusCode.OK)
@@ -60,6 +64,10 @@ namespace ApiGateway.Controllers
             var route = await gatewayService.SendRequest<RouteVM>(url.RoutesManagement + RouteRoutes.GetRoute(request.RouteId), null);
             if (route.StatusCode != System.Net.HttpStatusCode.OK)
                 return BadRequest(route.ErrorMessage);
+
+            var ticketAvailability = await gatewayService.SendRequest<bool>(url.TicketsManagement + TicketRoutes.CheckTicketAvailability(request.RouteId, request.SeatNo), null);
+            if (ticketAvailability.StatusCode != System.Net.HttpStatusCode.OK)
+                return BadRequest("Seat is already taken");
 
             var result = await gatewayService.SendRequest<BuyTicketVM, TicketVM>(url.TicketsManagement + TicketRoutes.BOOK_TICKET, headers, request);
 
