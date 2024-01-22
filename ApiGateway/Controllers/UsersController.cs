@@ -15,14 +15,12 @@ namespace ApiGateway.Controllers
     {
         private readonly IAuthService authService;
         private readonly IGatewayService gatewayService;
-        private readonly HttpClient httpClient;
         private readonly Urls url;
 
-        public UsersController(IAuthService authService, IGatewayService gatewayService, IHttpClientFactory httpClientFactory, IOptions<Urls> config)
+        public UsersController(IAuthService authService, IGatewayService gatewayService, IOptions<Urls> config)
         {
             this.authService = authService;
             this.gatewayService = gatewayService;
-            httpClient = httpClientFactory.CreateClient();
             url = config.Value;
         }
 
@@ -66,7 +64,7 @@ namespace ApiGateway.Controllers
         }
 
         [HttpGet("drivers/{id}")]
-        public async Task<IActionResult> Get(string id)
+        public async Task<IActionResult> Get(int id)
         {
             var result = await gatewayService.SendRequest<UserVM>(url.UsersManagement + UserRoutes.GetDriverById(id), null);
 

@@ -1,4 +1,5 @@
-﻿using ApiGateway.Data.ViewModels;
+﻿using ApiGateway.Data.DTO;
+using ApiGateway.Data.ViewModels;
 using ApiGateway.Routes;
 using ApiGateway.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -59,6 +60,15 @@ namespace ApiGateway.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddRoute([FromBody] AddRouteVM route)
         {
+            var bus = await gatewayService.SendRequest<BusVM>(url.RoutesManagement + BusRoutes.GetBus(route.BusId), null);
+            if (bus.StatusCode != System.Net.HttpStatusCode.OK)
+                return BadRequest("Bus does not exist!");
+
+            var driver = await gatewayService.SendRequest<UserVM>(url.UsersManagement + UserRoutes.GetDriverById(route.DriverId), null);
+            if (driver.StatusCode != System.Net.HttpStatusCode.OK)
+                return BadRequest("Driver does not exist");
+
+
             var result = await gatewayService.SendRequest<AddRouteVM, RouteVM>(url.RoutesManagement + RouteRoutes.ADD_ROUTE, null, route);
 
             if (result.StatusCode == System.Net.HttpStatusCode.Created)

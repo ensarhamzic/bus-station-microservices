@@ -30,5 +30,11 @@ namespace RoutesManagement.Services
 
             return (BusVM)busEntity;
         }
+
+        public Task<BusVM> GetBus(int id)
+        {
+            var bus = dbContext.Buses.Find(id);
+            return Task.FromResult((BusVM)bus);
+        }
     }
 }

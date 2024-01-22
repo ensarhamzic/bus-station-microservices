@@ -25,10 +25,21 @@ namespace RoutesManagement.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new
-                {
-                    message = ex.Message
-                });
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetBus(int id)
+        {
+            try
+            {
+                var bus = await busService.GetBus(id);
+                return Ok(bus);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
             }
         }
     }

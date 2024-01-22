@@ -6,5 +6,6 @@ namespace RoutesManagement.Services
     public interface IBusService
     {
         public Task<BusVM> AddBus(AddBusVM bus);
+        public Task<BusVM> GetBus(int id);
     }
 }

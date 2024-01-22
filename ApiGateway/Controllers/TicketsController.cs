@@ -18,14 +18,12 @@ namespace ApiGateway.Controllers
     {
         private readonly IAuthService authService;
         private readonly IGatewayService gatewayService;
-        private readonly HttpClient httpClient;
         private readonly Urls url;
 
-        public TicketsController(IAuthService authService, IGatewayService gatewayService, IHttpClientFactory httpClientFactory, IOptions<Urls> config)
+        public TicketsController(IAuthService authService, IGatewayService gatewayService, IOptions<Urls> config)
         {
             this.authService = authService;
             this.gatewayService = gatewayService;
-            httpClient = httpClientFactory.CreateClient();
             url = config.Value;
         }
 
@@ -36,6 +34,11 @@ namespace ApiGateway.Controllers
             {
                 { CustomHeaders.USER_ID, authService.GetAuthUserId() }
             };
+
+            var route = await gatewayService.SendRequest<RouteVM>(url.RoutesManagement + RouteRoutes.GetRoute(request.RouteId), null);
+            if (route.StatusCode != System.Net.HttpStatusCode.OK)
+                return BadRequest(route.ErrorMessage);
+
             var result = await gatewayService.SendRequest<BuyTicketVM, TicketVM>(url.TicketsManagement + TicketRoutes.BUY_TICKET, headers, request);
 
             if (result.StatusCode == System.Net.HttpStatusCode.OK)
@@ -53,6 +56,11 @@ namespace ApiGateway.Controllers
             {
                 { CustomHeaders.USER_ID, authService.GetAuthUserId() }
             };
+
+            var route = await gatewayService.SendRequest<RouteVM>(url.RoutesManagement + RouteRoutes.GetRoute(request.RouteId), null);
+            if (route.StatusCode != System.Net.HttpStatusCode.OK)
+                return BadRequest(route.ErrorMessage);
+
             var result = await gatewayService.SendRequest<BuyTicketVM, TicketVM>(url.TicketsManagement + TicketRoutes.BOOK_TICKET, headers, request);
 
             if (result.StatusCode == System.Net.HttpStatusCode.OK)
